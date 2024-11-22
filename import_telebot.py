@@ -32,7 +32,7 @@ def yn(message):                                                                
     owner_id = 5426110205
     if message.text =="Да":	
         bot.send_message(message.chat.id, "Хорошо! Сообщение отправлено!")
-        bot.forward_message(owner_id, message.chat.id, "5");
+        bot.forward_message(owner_id, message.chat.id, message);
     if message.text=="Нет":
         msg = bot.send_message(message.chat.id, "Плохо! Чтож, давай по новой.")
         return(bot.register_next_step_handler(msg, callback=hand));
