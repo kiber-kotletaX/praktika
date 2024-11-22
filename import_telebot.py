@@ -1,47 +1,36 @@
 import telebot
-from telebot import types
 token = '7792408011:AAEZKlxr5KchQPOhR5O8VPTC7M0prW2uhV4';
 bot = telebot.TeleBot(token);  
 
-
 #7729336143:AAFs3fKMgC7PDEhmwSm1-ZChBdg9alfsHcs -1    7792408011:AAEZKlxr5KchQPOhR5O8VPTC7M0prW2uhV4 -2
+
 #Приветсвие
-@bot.message_handler(commands=['start', 'button'])
+@bot.message_handler(commands=['start'])
 def welcome(message):
-    chat_id = message.chat.id
-    text = message.text
-    msg = bot.send_message(message.chat.id, "Привет, я бот, нажми кнопку, чтобы ввести своё сообщение")
-    markup=types.ReplyKeyboardMarkup(resize_keyboard=True)
-    item1=types.KeyboardButton("Ввести сообщение")
-    markup.add(item1)
-    if message.text == 'Ввести сообщение':
-        bot.register_next_step_handler(msg, callback=send)
 
-@bot.message_handler(commands=['button'])
-def send(message):
-        owner_id = 5426110205
-        chat_id = message.chat.id
-        text = message.text
-        msg =  bot.send_message(message.chat.id, "Стоит ли отправить Твоё сообщение ?")
-        markup=types.ReplyKeyboardMarkup(resize_keyboard=True)
-        item1=types.KeyboardButton("Да")
-        item2=types.KeyboardButton("Нет")
-        markup.add(item1, item2)	
-def reply(message):
+    msg = bot.send_message(message.chat.id, "Привет, я бот, напиши /text, чтобы ввести своё сообщение")
+    bot.register_next_step_handler(msg, callback=hand)
 
-        markup=types.ReplyKeyboardMarkup(resize_keyboard=True)
-        item1=types.KeyboardButton("Да")
-        item2=types.KeyboardButton("Нет")
-        markup.add(item1, item2)
-        owner_id = 5426110205
-        chat_id = message.chat.id
-        text = message.text
-        if message.text =="Да":
-            bot.reply_to(message.chat.id, "Хорошо! Сообщение отправлено!")
-            bot.forward_message(text, chat_id, owner_id)
-        elif message.text == "Нет":
-            bot.reply_to(message.chat.id, "Плохо! Чтож, давай по новой.")
-            return(bot.register_next_step_handler(message.text, next))
+@bot.message_handler(commands=['text'])
+def hand(message):                                                                                          #Ввод сообщения
+
+    msg = bot.send_message(message.chat.id, "Введи своё сообщение")
+    bot.register_next_step_handler(msg, callback=messg)
         
+def messg(message):                                                                                          #Отправка
+
+    bot.send_message(message.chat.id, "Стоит ли отправлять Твоё сообщение?")
+
+def yn(message):
+    owner_id = 5426110205
+    if message.text == 'Хз':
+        bot.send_message(message.chat.id, "Вот и я хз, отправлять, или нет")
+    elif message.text =="Да":	
+        bot.send_message(message.chat.id, "Хорошо! Сообщение отправлено!")
+        bot.forward_message(message.chat.id, message.text, owner_id)
+    else:
+        msg = bot.send_message(message.chat.id, "Плохо! Чтож, давай по новой.")
+        return(bot.register_next_step_handler(msg, callback=hand))       
+    
 
 bot.polling(none_stop=True, interval=0) 
