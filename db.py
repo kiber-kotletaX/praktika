@@ -1,31 +1,28 @@
-import sqlite3
+import sqlalchemy as sqla
 import telebot
 
 
 API_TOKEN = '7729336143:AAFs3fKMgC7PDEhmwSm1-ZChBdg9alfsHcs'
-DB_FILE_NAME = 'db.sqlite'
+
+CONNECTION = "mysql+pymysql://is61-10:mtc20r0t@192.168.3.111/irg"
+
+class Database:
+    def __init__(self):
+        self.engine = sqla.create_engine(CONNECTION)
+        self.connection = self.engine.connect()
+    
+    def adresat(self):
+        query = sqla.text("SELECT * FROM ADDRESAT")
+        result = self.connection.execute(query).all()
+        result_dict = []
+        for r in result:
+            result_dict.append(r._asdict())
+            return result
+    def mail(self,id:int):
+        query = sqla.text("SELECT * FROM mail WHERE id = :id")
 
 
-def create_connect():
-    return sqlite3.connect('tgbot_db')
-
-
-def init_db():
-    # Создание базы и таблицы
-    with create_connect() as connect:
-        connect.execute('''
-            CREATE TABLE IF NOT EXISTS Message (
-                id      INTEGER  PRIMARY KEY,
-                text    TEXT  NOT NULL   
-            );
-        ''')
-
-        connect.commit()
-
-
-def add_message(user_id, message):
-    with create_connect() as connect:
-        connect.execute(
-            'INSERT INTO Message (text) VALUES (?, ?)', (user_id, message)
-        )
-        connect.commit()
+if __name__ == "__main__":
+    db = Database()
+    print(db.get_mail(2))
+        
